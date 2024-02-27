@@ -15,6 +15,7 @@ pyo3-polars = {version = "0.11", features = ["derive"]}
 polars = {version = "0.37", features = ["performant", "lazy", "nightly"]}
 hashbrown = {version = "0.14.2", features=["nightly"]}
 iban_validate = "4.0.1"
+isin = "0.1.18"
 
 [target.'cfg(any(not(target_os = "linux"), use_mimalloc))'.dependencies]
 mimalloc = { version = "0.1", default-features = false }
