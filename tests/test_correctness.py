@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import pytest
-import polars as pl
-import numpy as np
-from polars.testing import assert_frame_equal
 
 
 # @pytest.mark.parametrize(

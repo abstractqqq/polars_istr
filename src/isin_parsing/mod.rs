@@ -30,9 +30,9 @@ fn pl_isin_full(inputs: &[Series]) -> PolarsResult<Series> {
                 cd_builder.append_null();
             }
         } else {
-                cc_builder.append_null();
-                id_builder.append_null();
-                cd_builder.append_null();
+            cc_builder.append_null();
+            id_builder.append_null();
+            cd_builder.append_null();
         }
     });
 
