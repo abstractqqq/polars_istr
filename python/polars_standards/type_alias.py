@@ -2,9 +2,9 @@ from __future__ import annotations
 import sys
 
 if sys.version_info >= (3, 10):
-    pass
+    from typing import TypeAlias # noqa
 else:  # 3.9, 3.8
-    pass
+    from typing_extensions import TypeAlias # noqa
 
 
 # DetrendMethod: TypeAlias = Literal["linear", "mean"]
