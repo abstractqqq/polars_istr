@@ -8,11 +8,11 @@ _lib = _get_shared_lib_location(__file__)
 class IsinExt:
 
     """
-    This class contains tools for parsing IBAN format data.
+    This class contains tools for parsing ISIN format data.
 
-    Polars Namespace: iban
+    Polars Namespace: isin 
 
-    Example: pl.col("iban_str").iban.country_code()
+    Example: pl.col("iban_str").isin.country_code()
     """
 
     def __init__(self, expr: pl.Expr):
@@ -51,7 +51,7 @@ class IsinExt:
 
     def is_valid(self) -> pl.Expr:
         """
-        Returns a boolean indicating whether the string is a valid IBAN string.
+        Returns a boolean indicating whether the string is a valid ISIN string.
         """
         return self._expr.register_plugin(
             lib=_lib,
@@ -61,7 +61,7 @@ class IsinExt:
 
     def extract_all(self) -> pl.Expr:
         """
-        Returns all information from IBAN and return as a struct. Empty string means the part cannot
+        Returns all information from ISIN and return as a struct. Empty string means the part cannot
         be extracted. Running this can be faster than running the corresponding single queries together.
         """
         return self._expr.register_plugin(
