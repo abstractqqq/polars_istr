@@ -1,6 +1,6 @@
+use iban::{Iban, IbanLike};
 use polars::prelude::*;
 use pyo3_polars::derive::polars_expr;
-use iban::{Iban, IbanLike};
 use std::{fmt::Write, str::FromStr};
 
 // Using Builder is the fastest way after my testing.
@@ -11,7 +11,7 @@ fn iban_full_output(_: &[Field]) -> PolarsResult<Field> {
     let bban = Field::new("bban", DataType::String);
     let bank = Field::new("bank_id", DataType::String);
     let branch = Field::new("branch_id", DataType::String);
-    let v: Vec<Field> = vec![cc,cd,bban,bank,branch];
+    let v: Vec<Field> = vec![cc, cd, bban, bank, branch];
     Ok(Field::new("", DataType::Struct(v)))
 }
 
@@ -55,10 +55,9 @@ fn pl_iban_full(inputs: &[Series]) -> PolarsResult<Series> {
     let bank = bank_builder.finish().into_series();
     let branch = branch_builder.finish().into_series();
 
-    let out = StructChunked::new("iban", &[cc,cd,bban,bank,branch])?;
+    let out = StructChunked::new("iban", &[cc, cd, bban, bank, branch])?;
     Ok(out.into_series())
 }
-
 
 #[polars_expr(output_type=String)]
 fn pl_iban_country_code(inputs: &[Series]) -> PolarsResult<Series> {
@@ -79,7 +78,6 @@ fn pl_iban_country_code(inputs: &[Series]) -> PolarsResult<Series> {
     let out = cc_builder.finish();
     Ok(out.into_series())
 }
-
 
 #[polars_expr(output_type=String)]
 fn pl_iban_check_digits(inputs: &[Series]) -> PolarsResult<Series> {
@@ -164,7 +162,7 @@ fn pl_iban_bban(inputs: &[Series]) -> PolarsResult<Series> {
 #[polars_expr(output_type=Boolean)]
 fn pl_iban_valid(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
-    let out:BooleanChunked = ca.apply_values_generic(|s| s.parse::<Iban>().is_ok());
+    let out: BooleanChunked = ca.apply_values_generic(|s| s.parse::<Iban>().is_ok());
     Ok(out.into_series())
 }
 
@@ -174,14 +172,9 @@ fn pl_iban_check(inputs: &[Series]) -> PolarsResult<Series> {
     let out = ca.apply_to_buffer(|s, buf| {
         let s = match Iban::from_str(s) {
             Ok(_) => "ok".to_string(),
-            Err(e) => e.to_string()
+            Err(e) => e.to_string(),
         };
         write!(buf, "{}", s).unwrap()
     });
     Ok(out.into_series())
 }
-
-
-
-
-
