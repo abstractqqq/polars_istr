@@ -1,0 +1,6 @@
+# requirements for testing
+maturin[patchelf]
+polars
+memray
+pytest-memray
+pytest-benchmark

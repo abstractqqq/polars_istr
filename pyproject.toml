@@ -1,0 +1,41 @@
+[build-system]
+requires = ["maturin>=1.2,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "polars_standards"
+requires-python = ">=3.8"
+version = "0.1.0"
+
+license = {file = "LICENSE.txt"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "License :: OSI Approved :: MIT License",
+]
+authors = [
+    {name = "Tianren Qin", email = "tq9695@gmail.com"},
+]
+dependencies = [
+    "polars >= 0.20.6",
+] 
+
+keywords = ["polars-extension", "string-processing", "data-processing", "parsing"]
+
+[tool.maturin]
+python-source = "python"
+features = ["pyo3/extension-module"]
+module-name = "polars_standards._polars_standards"
+
+[project.optional-dependencies]
+dev = [
+    "pytest >= 7.4.1",
+    "pre-commit",
+]
+
+[tool.ruff]
+line-length = 100
+fix = true
+src = ["python"]
