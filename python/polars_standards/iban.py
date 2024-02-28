@@ -82,7 +82,7 @@ class IbanExt:
 
     def check(self) -> pl.Expr:
         """
-        Returns a string that explains whether the IBAN string is valid or not, with good = valid.
+        Returns a string that explains whether the IBAN string is valid or not.
         """
         return self._expr.register_plugin(
             lib=_lib,
@@ -92,12 +92,12 @@ class IbanExt:
 
     def extract_all(self) -> pl.Expr:
         """
-        Returns all information from IBAN and return as a struct. Empty string means the part cannot
-        be extracted. Running this can be faster than running the corresponding single queries together.
+        Returns all information from IBAN and return as a struct. Running this can be 
+        faster than running the corresponding single queries together.
         """
         return self._expr.register_plugin(
             lib=_lib,
-            symbol="pl_iban_full",
+            symbol="pl_iban_extract_all",
             is_elementwise=True,
         )
 
