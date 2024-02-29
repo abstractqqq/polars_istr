@@ -13,4 +13,8 @@
 
 # The Project
 
-Processing standard (IBAN, URLs, etc.) format data in Polars.
+Processing IBAN, URLs, etc., and other standard format data in Polars.
+
+# Acknowledgements
+
+1. Iban is powered by [iban_validate](https://crates.io/crates/iban_validate)
