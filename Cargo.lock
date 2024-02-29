@@ -1405,7 +1405,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "polars_standards"
+name = "polars_istr"
 version = "0.1.0"
 dependencies = [
  "iban_validate",

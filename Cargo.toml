@@ -1,5 +1,5 @@
 [package]
-name = "polars_standards"
+name = "polars_istr"
 version = "0.1.0"
 edition = "2021"
 
@@ -24,4 +24,4 @@ jemallocator = { version = "0.5", features = ["disable_initial_exec_tls"] }
 [profile.release]
 codegen-units = 1
 strip = "symbols" 
-lto = "thin"
+lto = "fat"
