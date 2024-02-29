@@ -2,3 +2,4 @@ maturin[patchelf]
 polars
 pytest
 ipykernel
+pre-commit
