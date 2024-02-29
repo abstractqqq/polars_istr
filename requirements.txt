@@ -1,2 +1,4 @@
 maturin[patchelf]
 polars
+pytest
+ipykernel

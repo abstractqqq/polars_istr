@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 import polars as pl
 
-import polars_standards  # noqa: F401
+import polars_istr  # noqa: F401
 
 from polars.testing import assert_frame_equal
 from typing import List

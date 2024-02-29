@@ -12,6 +12,12 @@ For all feature related work, it would be great to ask yourself the following qu
 1. pre-commit. We use ruff.
 2. cargo fmt
 
+## How to get started?
+
+Take a look at the Makefile. Set up your environment first. Then take a look at the tutorial here, and grasp the basics of maturin here.
+
+Then find a issue/feature that you want to improve/implement!
+
 ## A word on Doc, Typo related PRs
 
 For docs and typo fix PRs, we welcome changes that:
