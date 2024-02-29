@@ -1,5 +1,5 @@
 <h1 align="center">
-  <b>Polars for Standard Format Data</b>
+  <b>Polars for Identifiers and Standard Format Strings</b>
   <br>
 </h1>
 
