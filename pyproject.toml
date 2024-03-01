@@ -3,7 +3,7 @@ requires = ["maturin>=1.2,<2.0"]
 build-backend = "maturin"
 
 [project]
-name = "polars_standards"
+name = "polars_istr"
 requires-python = ">=3.8"
 version = "0.1.0"
 
@@ -19,7 +19,7 @@ authors = [
     {name = "Tianren Qin", email = "tq9695@gmail.com"},
 ]
 dependencies = [
-    "polars >= 0.20.6",
+    "polars >= 0.20.6, !=0.20.12",
 ] 
 
 keywords = ["polars-extension", "string-processing", "data-processing", "parsing"]
@@ -27,7 +27,7 @@ keywords = ["polars-extension", "string-processing", "data-processing", "parsing
 [tool.maturin]
 python-source = "python"
 features = ["pyo3/extension-module"]
-module-name = "polars_standards._polars_standards"
+module-name = "polars_istr._polars_istr"
 
 [project.optional-dependencies]
 dev = [
