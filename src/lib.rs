@@ -11,7 +11,7 @@ use jemallocator::Jemalloc;
 static ALLOC: Jemalloc = Jemalloc;
 
 #[pymodule]
-#[pyo3(name = "_polars_ds")]
-fn _polars_ds(_py: Python<'_>, _m: &PyModule) -> PyResult<()> {
+#[pyo3(name = "_polars_istr")]
+fn _polars_istr(_py: Python<'_>, _m: &PyModule) -> PyResult<()> {
     Ok(())
 }

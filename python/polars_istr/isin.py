@@ -12,7 +12,7 @@ class IsinExt:
 
     Polars Namespace: isin 
 
-    Example: pl.col("iban_str").isin.country_code()
+    Example: pl.col("isin_str").isin.country_code()
     """
 
     def __init__(self, expr: pl.Expr):

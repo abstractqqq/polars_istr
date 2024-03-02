@@ -3,8 +3,7 @@ use polars::prelude::*;
 use pyo3_polars::derive::polars_expr;
 use std::{fmt::Write, str::FromStr};
 
-// Using Builder is the fastest way after my testing.
-
+// Using Builder seems to be the fastest way.
 fn iban_full_output(_: &[Field]) -> PolarsResult<Field> {
     let cc = Field::new("country_code", DataType::String);
     let cd = Field::new("check_digits", DataType::String);
@@ -16,7 +15,7 @@ fn iban_full_output(_: &[Field]) -> PolarsResult<Field> {
 }
 
 #[polars_expr(output_type_func=iban_full_output)]
-fn pl_iban_full(inputs: &[Series]) -> PolarsResult<Series> {
+fn pl_iban_extract_all(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
     let mut cc_builder = StringChunkedBuilder::new("country_code", ca.len());
@@ -82,7 +81,7 @@ fn pl_iban_country_code(inputs: &[Series]) -> PolarsResult<Series> {
 #[polars_expr(output_type=String)]
 fn pl_iban_check_digits(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
-    let mut cc_builder = StringChunkedBuilder::new("country_code", ca.len());
+    let mut cc_builder = StringChunkedBuilder::new("check_digits", ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -102,47 +101,47 @@ fn pl_iban_check_digits(inputs: &[Series]) -> PolarsResult<Series> {
 #[polars_expr(output_type=String)]
 fn pl_iban_bank_identifier(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
-    let mut cc_builder = StringChunkedBuilder::new("country_code", ca.len());
+    let mut ba_builder = StringChunkedBuilder::new("bank_id", ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
             if let Ok(iban) = Iban::from_str(s) {
-                cc_builder.append_option(iban.bank_identifier());
+                ba_builder.append_option(iban.bank_identifier());
             } else {
-                cc_builder.append_null();
+                ba_builder.append_null();
             }
         } else {
-            cc_builder.append_null();
+            ba_builder.append_null();
         }
     });
-    let out = cc_builder.finish();
+    let out = ba_builder.finish();
     Ok(out.into_series())
 }
 
 #[polars_expr(output_type=String)]
 fn pl_iban_branch_identifier(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
-    let mut cc_builder = StringChunkedBuilder::new("country_code", ca.len());
+    let mut br_builder = StringChunkedBuilder::new("branch_id", ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
             if let Ok(iban) = Iban::from_str(s) {
-                cc_builder.append_option(iban.branch_identifier());
+                br_builder.append_option(iban.branch_identifier());
             } else {
-                cc_builder.append_null();
+                br_builder.append_null();
             }
         } else {
-            cc_builder.append_null();
+            br_builder.append_null();
         }
     });
-    let out = cc_builder.finish();
+    let out = br_builder.finish();
     Ok(out.into_series())
 }
 
 #[polars_expr(output_type=Boolean)]
 fn pl_iban_bban(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
-    let mut cc_builder = StringChunkedBuilder::new("country_code", ca.len());
+    let mut cc_builder = StringChunkedBuilder::new("bban", ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -172,7 +171,16 @@ fn pl_iban_check(inputs: &[Series]) -> PolarsResult<Series> {
     let out = ca.apply_to_buffer(|s, buf| {
         let s = match Iban::from_str(s) {
             Ok(_) => "ok".to_string(),
-            Err(e) => e.to_string(),
+            Err(e) => match e {
+                iban::ParseIbanError::InvalidBaseIban { source } => match source {
+                    iban::ParseBaseIbanError::InvalidFormat => {
+                        "Invalid format (len/char)".to_string()
+                    }
+                    iban::ParseBaseIbanError::InvalidChecksum => "Invalid checksum".to_string(),
+                },
+                iban::ParseIbanError::InvalidBban(_) => "Invalid Bban".to_string(),
+                iban::ParseIbanError::UnknownCountry(_) => "Invalid country code".to_string(),
+            },
         };
         write!(buf, "{}", s).unwrap()
     });
