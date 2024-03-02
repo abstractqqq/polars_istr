@@ -287,6 +287,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cusip"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "550167b2465506b2a95f6af5c0b869266b9e598f2354fbb31a14c2e6df543307"
+
+[[package]]
 name = "dyn-clone"
 version = "1.0.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1086,6 +1092,7 @@ dependencies = [
 name = "polars_standards"
 version = "0.1.0"
 dependencies = [
+ "cusip",
  "hashbrown",
  "iban_validate",
  "isin",
