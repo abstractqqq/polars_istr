@@ -18,3 +18,4 @@ Processing IBAN, URLs, etc., and other standard format data in Polars.
 # Acknowledgements
 
 1. Iban is powered by [iban_validate](https://crates.io/crates/iban_validate)
+2. Isin is powered by [isin_rs](https://docs.rs/isin/latest/isin/)
