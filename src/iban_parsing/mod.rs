@@ -159,7 +159,7 @@ fn pl_iban_bban(inputs: &[Series]) -> PolarsResult<Series> {
 }
 
 #[polars_expr(output_type=Boolean)]
-fn pl_iban_valid(inputs: &[Series]) -> PolarsResult<Series> {
+fn pl_iban_is_valid(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
     let out: BooleanChunked = ca.apply_values_generic(|s| s.parse::<Iban>().is_ok());
     Ok(out.into_series())
@@ -169,7 +169,7 @@ fn pl_iban_valid(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_iban_check(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
     let out = ca.apply_to_buffer(|s, buf| {
-        let s = match Iban::from_str(s) {
+        let ss = match Iban::from_str(s) {
             Ok(_) => "ok".to_string(),
             Err(e) => match e {
                 iban::ParseIbanError::InvalidBaseIban { source } => match source {
@@ -182,7 +182,7 @@ fn pl_iban_check(inputs: &[Series]) -> PolarsResult<Series> {
                 iban::ParseIbanError::UnknownCountry(_) => "Invalid country code".to_string(),
             },
         };
-        write!(buf, "{}", s).unwrap()
+        write!(buf, "{}", ss).unwrap()
     });
     Ok(out.into_series())
 }

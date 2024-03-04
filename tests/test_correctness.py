@@ -6,7 +6,7 @@ import polars as pl
 import polars_istr  # noqa: F401
 
 from polars.testing import assert_frame_equal
-from typing import List
+from typing import List, Optional
 
 
 @pytest.mark.parametrize(
@@ -35,13 +35,13 @@ from typing import List
 )
 def test_iban1(
     df: pl.DataFrame,
-    cc: List[str],
-    cd: List[str],
-    reason: List[str],
-    is_valid: List[bool],
-    bban: List[str],
-    bank_id: List[str],
-    branch_id: List[str],
+    cc: List[Optional[str]],
+    cd: List[Optional[str]],
+    reason: List[Optional[str]],
+    is_valid: List[Optional[bool]],
+    bban: List[Optional[str]],
+    bank_id: List[Optional[str]],
+    branch_id: List[Optional[str]],
 ):
     test1 = df.select(
         pl.col("iban").iban.country_code().alias("country_code"),
@@ -84,6 +84,100 @@ def test_iban1(
 
 
 @pytest.mark.parametrize(
+    "df, host, domain, fragment, path, query, check, is_valid, is_special",
+    [
+        (
+            pl.DataFrame(
+                {
+                    "url": [
+                        "https://example.com/data.csv#row=4",
+                        "google.com",
+                        "ww.google.com",
+                        "abc123@email.com",
+                        "https://127.0.0.1/",
+                        "https://test.com/",
+                        "file:///tmp/foo",
+                        "https://example.com/products?page=2&sort=desc",
+                        None,
+                    ]
+                }
+            ),
+            ["example.com", None, None, None, "127.0.0.1", "test.com", None, "example.com", None],
+            ["example.com", None, None, None, None, "test.com", None, "example.com", None],
+            ["row=4", None, None, None, None, None, None, None, None],
+            ["/data.csv", None, None, None, "/", "/", "/tmp/foo", "/products", None],
+            [None, None, None, None, None, None, None, "page=2&sort=desc", None],
+            [
+                "ok",
+                "relative URL without a base",
+                "relative URL without a base",
+                "relative URL without a base",
+                "ok",
+                "ok",
+                "ok",
+                "ok",
+                None,
+            ],
+            [True, False, False, False, True, True, True, True, None],
+            [True, None, None, None, True, True, True, True, None],
+        )
+    ],
+)
+def test_url1(
+    df: pl.DataFrame,
+    host: List[Optional[str]],
+    domain: List[Optional[str]],
+    fragment: List[Optional[str]],
+    path: List[Optional[str]],
+    query: List[Optional[str]],
+    check: List[Optional[str]],
+    is_valid: List[Optional[bool]],
+    is_special: List[Optional[bool]],
+):
+    test1 = df.select(
+        pl.col("url").url.host().alias("host"),
+        pl.col("url").url.domain().alias("domain"),
+        pl.col("url").url.fragment().alias("fragment"),
+        pl.col("url").url.path().alias("path"),
+        pl.col("url").url.query().alias("query"),
+        pl.col("url").url.check().alias("check"),
+        pl.col("url").url.is_valid().alias("is_valid"),
+        pl.col("url").url.is_special().alias("is_special"),
+    )
+
+    test2 = (
+        df.lazy()
+        .select(
+            pl.col("url").url.host().alias("host"),
+            pl.col("url").url.domain().alias("domain"),
+            pl.col("url").url.fragment().alias("fragment"),
+            pl.col("url").url.path().alias("path"),
+            pl.col("url").url.query().alias("query"),
+            pl.col("url").url.check().alias("check"),
+            pl.col("url").url.is_valid().alias("is_valid"),
+            pl.col("url").url.is_special().alias("is_special"),
+        )
+        .collect()
+    )
+
+    ans = pl.DataFrame(
+        {
+            "host": host,
+            "domain": domain,
+            "fragment": fragment,
+            "path": path,
+            "query": query,
+            "check": check,
+            "is_valid": is_valid,
+            "is_special": is_special,
+        }
+    )
+
+    assert_frame_equal(test1, ans)
+    assert_frame_equal(test2, ans)
+
+
+@pytest.mark.parametrize(
     "df, cc, cd, sec_id, is_valid",
     [
         (
@@ -108,10 +202,10 @@ def test_iban1(
 )
 def test_isin1(
     df: pl.DataFrame,
-    cc: List[str],
-    cd: List[str],
-    sec_id: List[str],
-    is_valid: List[str],
+    cc: List[Optional[str]],
+    cd: List[Optional[str]],
+    sec_id: List[Optional[str]],
+    is_valid: List[Optional[str]],
 ):
     test1 = df.select(
         pl.col("isin").isin.country_code().alias("country_code"),

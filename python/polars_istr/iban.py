@@ -77,7 +77,7 @@ class IbanExt:
         """
         return self._expr.register_plugin(
             lib=_lib,
-            symbol="pl_iban_valid",
+            symbol="pl_iban_is_valid",
             is_elementwise=True,
         )
 
