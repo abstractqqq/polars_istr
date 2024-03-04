@@ -8,6 +8,7 @@ import polars_istr  # noqa: F401
 from polars.testing import assert_frame_equal
 from typing import List
 
+
 @pytest.mark.parametrize(
     "df, cc, cd, reason, is_valid, bban, bank_id, branch_id",
     [
@@ -81,56 +82,62 @@ def test_iban1(
     assert_frame_equal(test1, ans)
     assert_frame_equal(test2, ans)
 
+
 @pytest.mark.parametrize(
-        "df, cc, cd, sec_id, is_valid",
-        [
-            (
-                pl.DataFrame(
-                    {
-                        "isin": [
-                            "US0378331005", # AAPL
-                            "US0378331008", # AAPL w/ bad check digit
-                            "US037833100", # AAPL w/o check digit
-                            "CA00206RGB20", # Canadian
-                            "XS1550212416", # Other
-                            None,
-                        ]
-                    }
-                ),
-            ["US", None, None, "CA", "XS",None],
+    "df, cc, cd, sec_id, is_valid",
+    [
+        (
+            pl.DataFrame(
+                {
+                    "isin": [
+                        "US0378331005",  # AAPL
+                        "US0378331008",  # AAPL w/ bad check digit
+                        "US037833100",  # AAPL w/o check digit
+                        "CA00206RGB20",  # Canadian
+                        "XS1550212416",  # Other
+                        None,
+                    ]
+                }
+            ),
+            ["US", None, None, "CA", "XS", None],
             ["5", None, None, "0", "6", None],
             ["037833100", None, None, "00206RGB2", "155021241", None],
-            [True, False, False, True, True, False]
-            )
-        ],
+            [True, False, False, True, True, False],
+        )
+    ],
 )
 def test_isin1(
-        df: pl.DataFrame,
-        cc: List[str],
-        cd: List[str],
-        sec_id: List[str],
-        is_valid: List[str],
-        ):
+    df: pl.DataFrame,
+    cc: List[str],
+    cd: List[str],
+    sec_id: List[str],
+    is_valid: List[str],
+):
     test1 = df.select(
+        pl.col("isin").isin.country_code().alias("country_code"),
+        pl.col("isin").isin.check_digit().alias("check_digit"),
+        pl.col("isin").isin.security_id().alias("security_id"),
+        pl.col("isin").isin.is_valid().alias("is_valid"),
+    )
+    test2 = (
+        df.lazy()
+        .select(
             pl.col("isin").isin.country_code().alias("country_code"),
             pl.col("isin").isin.check_digit().alias("check_digit"),
             pl.col("isin").isin.security_id().alias("security_id"),
             pl.col("isin").isin.is_valid().alias("is_valid"),
         )
-    test2 = df.lazy().select(
-            pl.col("isin").isin.country_code().alias("country_code"),
-            pl.col("isin").isin.check_digit().alias("check_digit"),
-            pl.col("isin").isin.security_id().alias("security_id"),
-            pl.col("isin").isin.is_valid().alias("is_valid"),
-        ).collect()
+        .collect()
+    )
 
-    ans = pl.DataFrame({
-        "country_code": cc,
-        "check_digit": cd,
-        "security_id": sec_id,
-        "is_valid": is_valid,
-    })
+    ans = pl.DataFrame(
+        {
+            "country_code": cc,
+            "check_digit": cd,
+            "security_id": sec_id,
+            "is_valid": is_valid,
+        }
+    )
 
     assert_frame_equal(test1, ans)
     assert_frame_equal(test2, ans)
-    
