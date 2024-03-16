@@ -7,7 +7,6 @@ _lib = _get_shared_lib_location(__file__)
 
 @pl.api.register_expr_namespace("isin")
 class IsinExt:
-
     """
     This class contains tools for parsing ISIN format data.
 
