@@ -288,9 +288,9 @@ dependencies = [
 
 [[package]]
 name = "cusip"
-version = "0.2.5"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "550167b2465506b2a95f6af5c0b869266b9e598f2354fbb31a14c2e6df543307"
+checksum = "12a2525debe63fd4756220e103a8200bf74d02b2367451964868aa48ad1d3376"
 
 [[package]]
 name = "dyn-clone"

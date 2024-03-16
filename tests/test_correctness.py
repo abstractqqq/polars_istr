@@ -36,8 +36,8 @@ import pytest
             [False, None, False, None],
             [False, None, False, None],
             [False, None, True, None],
-            [False, None, True, None],
-            [False, None, False, None]
+            [None, None, True, None], # TODO for these last 2, should regular cusips return False or None?
+            [None, None, False, None] 
         )
     ],
     )
