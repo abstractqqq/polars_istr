@@ -1,4 +1,3 @@
-use isin;
 use polars::prelude::*;
 use pyo3_polars::derive::polars_expr;
 
@@ -111,7 +110,7 @@ fn pl_isin_check_digit(inputs: &[Series]) -> PolarsResult<Series> {
 }
 
 #[polars_expr(output_type=Boolean)]
-fn pl_isin_valid(inputs: &[Series]) -> PolarsResult<Series> {
+fn pl_isin_is_valid(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
     let mut builder = BooleanChunkedBuilder::new("isin_valid", ca.len());

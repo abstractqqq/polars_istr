@@ -4,15 +4,16 @@ from polars.utils.udfs import _get_shared_lib_location
 
 _lib = _get_shared_lib_location(__file__)
 
+
 @pl.api.register_expr_namespace("isin")
 class IsinExt:
 
     """
     This class contains tools for parsing ISIN format data.
 
-    Polars Namespace: isin 
+    Polars Namespace: isin
 
-    Example: pl.col("iban_str").isin.country_code()
+    Example: pl.col("isin_str").isin.country_code()
     """
 
     def __init__(self, expr: pl.Expr):
@@ -37,7 +38,7 @@ class IsinExt:
             symbol="pl_isin_check_digit",
             is_elementwise=True,
         )
-    
+
     def security_id(self) -> pl.Expr:
         """
         Returns the 9-digit security identifier of the ISIN, or null if it cannot
@@ -55,7 +56,7 @@ class IsinExt:
         """
         return self._expr.register_plugin(
             lib=_lib,
-            symbol="pl_isin_valid",
+            symbol="pl_isin_is_valid",
             is_elementwise=True,
         )
 
@@ -69,6 +70,3 @@ class IsinExt:
             symbol="pl_isin_full",
             is_elementwise=True,
         )
-
-
-

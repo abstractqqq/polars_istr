@@ -4,6 +4,7 @@ from polars.utils.udfs import _get_shared_lib_location
 
 _lib = _get_shared_lib_location(__file__)
 
+
 @pl.api.register_expr_namespace("iban")
 class IbanExt:
 
@@ -50,7 +51,7 @@ class IbanExt:
 
     def bank_id(self) -> pl.Expr:
         """
-        Returns bank identifier from the BBAN portion of the IBAN string, 
+        Returns bank identifier from the BBAN portion of the IBAN string,
         or null if it cannot be parsed.
         """
         return self._expr.register_plugin(
@@ -61,7 +62,7 @@ class IbanExt:
 
     def branch_id(self) -> pl.Expr:
         """
-        Returns branch identifier from the BBAN portion of the IBAN string, 
+        Returns branch identifier from the BBAN portion of the IBAN string,
         or null if it cannot be parsed.
         """
         return self._expr.register_plugin(
@@ -76,13 +77,13 @@ class IbanExt:
         """
         return self._expr.register_plugin(
             lib=_lib,
-            symbol="pl_iban_valid",
+            symbol="pl_iban_is_valid",
             is_elementwise=True,
         )
 
     def check(self) -> pl.Expr:
         """
-        Returns a string that explains whether the IBAN string is valid or not, with good = valid.
+        Returns a string that explains whether the IBAN string is valid or not.
         """
         return self._expr.register_plugin(
             lib=_lib,
@@ -92,14 +93,11 @@ class IbanExt:
 
     def extract_all(self) -> pl.Expr:
         """
-        Returns all information from IBAN and return as a struct. Empty string means the part cannot
-        be extracted. Running this can be faster than running the corresponding single queries together.
+        Returns all information from IBAN and return as a struct. Running this can be
+        faster than running the corresponding single queries together.
         """
         return self._expr.register_plugin(
             lib=_lib,
-            symbol="pl_iban_full",
+            symbol="pl_iban_extract_all",
             is_elementwise=True,
         )
-
-
-
