@@ -1,3 +1,4 @@
+mod cusip_parsing;
 mod iban_parsing;
 mod isin_parsing;
 mod url_parsing;

@@ -7,7 +7,6 @@ _lib = _get_shared_lib_location(__file__)
 
 @pl.api.register_expr_namespace("url")
 class UrlExt:
-
     """
     This class contains tools for parsing URL strings.
 

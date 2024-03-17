@@ -1,4 +1,3 @@
-use isin;
 use polars::prelude::*;
 use pyo3_polars::derive::polars_expr;
 
