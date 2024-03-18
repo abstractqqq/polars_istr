@@ -17,6 +17,7 @@ classifiers = [
 ]
 authors = [
     {name = "Tianren Qin", email = "tq9695@gmail.com"},
+    {name = "Connor Duncan", email = "connor@connorduncan.xyz"},
 ]
 dependencies = [
     "polars >= 0.20.6, !=0.20.12",
