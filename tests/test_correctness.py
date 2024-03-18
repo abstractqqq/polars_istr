@@ -7,13 +7,10 @@ from typing import List
 
 import pytest
 
-import pytest
-import polars as pl
 
 import polars_istr  # noqa: F401
 
-from polars.testing import assert_frame_equal
-from typing import List, Optional
+from typing import Optional
 
 
 # There are no valid test cases for Extended CINS or Private Issue(r) since I could not
@@ -115,6 +112,9 @@ def test_cusip(
             "is_cins_extended": is_cins_extended,
         }
     )
+
+    assert_frame_equal(test1, ans)
+    assert_frame_equal(test2, ans)
 
 
 @pytest.mark.parametrize(

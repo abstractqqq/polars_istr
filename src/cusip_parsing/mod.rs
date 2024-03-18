@@ -114,7 +114,7 @@ fn pl_cusip_country_code(inputs: &[Series]) -> PolarsResult<Series> {
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
             if let Ok(cusip) = CUSIP::parse(s) {
-                if let Some(cins) = cusip.as_cins(){
+                if let Some(cins) = cusip.as_cins() {
                     s_builder.append_value(cins.country_code().to_string());
                 } else {
                     s_builder.append_null();
