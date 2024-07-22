@@ -1,6 +1,30 @@
+import os
+import re
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
+
 import polars as pl
-from typing import Any, Optional, List, Dict
+
 from .type_alias import StrOrExpr
+
+_POLARS_LEGACY_SUPPORT = tuple(int(re.sub("[^0-9]", "", x)) for x in pl.__version__.split(".")) < (
+    0,
+    20,
+    16,
+)
+_IS_POLARS_V1 = pl.__version__.startswith("1")
+
+_PLUGIN_PATH = Path(__file__).parent
+
+_PLUGIN_LIB_LEGACY = os.path.join(
+    os.path.dirname(__file__),
+    next(
+        filter(
+            lambda file: file.endswith((".so", ".dll", ".pyd")),
+            os.listdir(os.path.dirname(__file__)),
+        )
+    ),
+)
 
 
 def str_to_expr(x: StrOrExpr) -> pl.Expr:
@@ -14,23 +38,20 @@ def str_to_expr(x: StrOrExpr) -> pl.Expr:
 
 def pl_plugin(
     *,
-    lib: str,
     symbol: str,
-    args: List[StrOrExpr],
+    args: List[Union[pl.Series, pl.Expr]],
     kwargs: Optional[Dict[str, Any]] = None,
     is_elementwise: bool = False,
     returns_scalar: bool = False,
     changes_length: bool = False,
     cast_to_supertype: bool = False,
 ) -> pl.Expr:
-    # pl.__version__ should always be a valid version number, so split returns always 3 strs
-    if tuple(int(x) for x in pl.__version__.split(".")) < (0, 20, 16):
-        # This will eventually be deprecated?
-        first = str_to_expr(args[0])
-        return first.register_plugin(
-            lib=lib,
+    if _POLARS_LEGACY_SUPPORT:
+        # This will eventually be deprecated, yes
+        return args[0].register_plugin(
+            lib=_PLUGIN_LIB_LEGACY,
             symbol=symbol,
-            args=[str_to_expr(x) for x in args[1:]],
+            args=args[1:],
             kwargs=kwargs,
             is_elementwise=is_elementwise,
             returns_scalar=returns_scalar,
@@ -41,8 +62,8 @@ def pl_plugin(
     from polars.plugins import register_plugin_function
 
     return register_plugin_function(
-        plugin_path=lib,
-        args=[str_to_expr(x) for x in args],
+        plugin_path=_PLUGIN_PATH,
+        args=args,
         function_name=symbol,
         kwargs=kwargs,
         is_elementwise=is_elementwise,

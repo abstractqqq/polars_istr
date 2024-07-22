@@ -2,8 +2,8 @@ import polars as pl
 from polars.testing import assert_frame_equal
 from typing import List
 import pytest
-import polars_istr  # noqa: F401
 from typing import Optional
+from polars_istr import *  # noqa: F403
 
 
 # There are no valid test cases for Extended CINS or Private Issue(r) since I could not
@@ -11,9 +11,9 @@ from typing import Optional
 # If anyone has encountered one and would like it added to the tests, please raise an
 # issue.
 @pytest.mark.parametrize(
-    """df, issue_num, issuer_num, check_digit, country_code,
-    payload, is_private_issue, has_private_issuer, is_private_use, is_cins,
-    is_cins_base, is_cins_extended""",
+    """df,issue_num, issuer_num,check_digit,country_code,
+   payload,is_private_issue,has_private_issuer,is_private_use,is_cins,
+   is_cins_base,is_cins_extended""",
     [
         (
             pl.DataFrame(
@@ -60,33 +60,33 @@ def test_cusip(
     is_cins_extended: List[str],
 ):
     test1 = df.select(
-        pl.col("cusip").cusip.issue_num().alias("issue_num"),
-        pl.col("cusip").cusip.issuer_num().alias("issuer_num"),
-        pl.col("cusip").cusip.check_digit().alias("check_digit"),
-        pl.col("cusip").cusip.country_code().alias("country_code"),
-        pl.col("cusip").cusip.payload().alias("payload"),
-        pl.col("cusip").cusip.is_private_issue().alias("is_private_issue"),
-        pl.col("cusip").cusip.has_private_issuer().alias("has_private_issuer"),
-        pl.col("cusip").cusip.is_private_use().alias("is_private_use"),
-        pl.col("cusip").cusip.is_cins().alias("is_cins"),
-        pl.col("cusip").cusip.is_cins_base().alias("is_cins_base"),
-        pl.col("cusip").cusip.is_cins_extended().alias("is_cins_extended"),
+        cusip_issue_num(pl.col("cusip")).alias("issue_num"),
+        cusip_issuer_num(pl.col("cusip")).alias("issuer_num"),
+        cusip_check_digit(pl.col("cusip")).alias("check_digit"),
+        cusip_country_code(pl.col("cusip")).alias("country_code"),
+        cusip_payload(pl.col("cusip")).alias("payload"),
+        cusip_is_private_issue(pl.col("cusip")).alias("is_private_issue"),
+        cusip_has_private_issuer(pl.col("cusip")).alias("has_private_issuer"),
+        cusip_is_private_use(pl.col("cusip")).alias("is_private_use"),
+        cusip_is_cins(pl.col("cusip")).alias("is_cins"),
+        cusip_is_cins_base(pl.col("cusip")).alias("is_cins_base"),
+        cusip_is_cins_extended(pl.col("cusip")).alias("is_cins_extended"),
     )
 
     test2 = (
         df.lazy()
         .select(
-            pl.col("cusip").cusip.issue_num().alias("issue_num"),
-            pl.col("cusip").cusip.issuer_num().alias("issuer_num"),
-            pl.col("cusip").cusip.check_digit().alias("check_digit"),
-            pl.col("cusip").cusip.country_code().alias("country_code"),
-            pl.col("cusip").cusip.payload().alias("payload"),
-            pl.col("cusip").cusip.is_private_issue().alias("is_private_issue"),
-            pl.col("cusip").cusip.has_private_issuer().alias("has_private_issuer"),
-            pl.col("cusip").cusip.is_private_use().alias("is_private_use"),
-            pl.col("cusip").cusip.is_cins().alias("is_cins"),
-            pl.col("cusip").cusip.is_cins_base().alias("is_cins_base"),
-            pl.col("cusip").cusip.is_cins_extended().alias("is_cins_extended"),
+            cusip_issue_num(pl.col("cusip")).alias("issue_num"),
+            cusip_issuer_num(pl.col("cusip")).alias("issuer_num"),
+            cusip_check_digit(pl.col("cusip")).alias("check_digit"),
+            cusip_country_code(pl.col("cusip")).alias("country_code"),
+            cusip_payload(pl.col("cusip")).alias("payload"),
+            cusip_is_private_issue(pl.col("cusip")).alias("is_private_issue"),
+            cusip_has_private_issuer(pl.col("cusip")).alias("has_private_issuer"),
+            cusip_is_private_use(pl.col("cusip")).alias("is_private_use"),
+            cusip_is_cins(pl.col("cusip")).alias("is_cins"),
+            cusip_is_cins_base(pl.col("cusip")).alias("is_cins_base"),
+            cusip_is_cins_extended(pl.col("cusip")).alias("is_cins_extended"),
         )
         .collect()
     )
@@ -145,25 +145,25 @@ def test_iban1(
     branch_id: List[Optional[str]],
 ):
     test1 = df.select(
-        pl.col("iban").iban.country_code().alias("country_code"),
-        pl.col("iban").iban.check_digits().alias("check_digits"),
-        pl.col("iban").iban.check().alias("reason"),
-        pl.col("iban").iban.is_valid().alias("is_valid"),
-        pl.col("iban").iban.bban().alias("bban"),
-        pl.col("iban").iban.bank_id().alias("bank_id"),
-        pl.col("iban").iban.branch_id().alias("branch_id"),
+        iban_country_code(pl.col("iban")).alias("country_code"),
+        iban_check_digits(pl.col("iban")).alias("check_digits"),
+        iban_check(pl.col("iban")).alias("reason"),
+        iban_is_valid(pl.col("iban")).alias("is_valid"),
+        iban_bban(pl.col("iban")).alias("bban"),
+        iban_bank_id(pl.col("iban")).alias("bank_id"),
+        iban_branch_id(pl.col("iban")).alias("branch_id"),
     )
 
     test2 = (
         df.lazy()
         .select(
-            pl.col("iban").iban.country_code().alias("country_code"),
-            pl.col("iban").iban.check_digits().alias("check_digits"),
-            pl.col("iban").iban.check().alias("reason"),
-            pl.col("iban").iban.is_valid().alias("is_valid"),
-            pl.col("iban").iban.bban().alias("bban"),
-            pl.col("iban").iban.bank_id().alias("bank_id"),
-            pl.col("iban").iban.branch_id().alias("branch_id"),
+            iban_country_code(pl.col("iban")).alias("country_code"),
+            iban_check_digits(pl.col("iban")).alias("check_digits"),
+            iban_check(pl.col("iban")).alias("reason"),
+            iban_is_valid(pl.col("iban")).alias("is_valid"),
+            iban_bban(pl.col("iban")).alias("bban"),
+            iban_bank_id(pl.col("iban")).alias("bank_id"),
+            iban_branch_id(pl.col("iban")).alias("branch_id"),
         )
         .collect()
     )
@@ -236,27 +236,27 @@ def test_url1(
     is_special: List[Optional[bool]],
 ):
     test1 = df.select(
-        pl.col("url").url.host().alias("host"),
-        pl.col("url").url.domain().alias("domain"),
-        pl.col("url").url.fragment().alias("fragment"),
-        pl.col("url").url.path().alias("path"),
-        pl.col("url").url.query().alias("query"),
-        pl.col("url").url.check().alias("check"),
-        pl.col("url").url.is_valid().alias("is_valid"),
-        pl.col("url").url.is_special().alias("is_special"),
+        url_host(pl.col("url")).alias("host"),
+        url_domain(pl.col("url")).alias("domain"),
+        url_fragment(pl.col("url")).alias("fragment"),
+        url_path(pl.col("url")).alias("path"),
+        url_query(pl.col("url")).alias("query"),
+        url_check(pl.col("url")).alias("check"),
+        url_is_valid(pl.col("url")).alias("is_valid"),
+        url_is_special(pl.col("url")).alias("is_special"),
     )
 
     test2 = (
         df.lazy()
         .select(
-            pl.col("url").url.host().alias("host"),
-            pl.col("url").url.domain().alias("domain"),
-            pl.col("url").url.fragment().alias("fragment"),
-            pl.col("url").url.path().alias("path"),
-            pl.col("url").url.query().alias("query"),
-            pl.col("url").url.check().alias("check"),
-            pl.col("url").url.is_valid().alias("is_valid"),
-            pl.col("url").url.is_special().alias("is_special"),
+            url_host(pl.col("url")).alias("host"),
+            url_domain(pl.col("url")).alias("domain"),
+            url_fragment(pl.col("url")).alias("fragment"),
+            url_path(pl.col("url")).alias("path"),
+            url_query(pl.col("url")).alias("query"),
+            url_check(pl.col("url")).alias("check"),
+            url_is_valid(pl.col("url")).alias("is_valid"),
+            url_is_special(pl.col("url")).alias("is_special"),
         )
         .collect()
     )
@@ -309,18 +309,18 @@ def test_isin1(
     is_valid: List[Optional[str]],
 ):
     test1 = df.select(
-        pl.col("isin").isin.country_code().alias("country_code"),
-        pl.col("isin").isin.check_digit().alias("check_digit"),
-        pl.col("isin").isin.security_id().alias("security_id"),
-        pl.col("isin").isin.is_valid().alias("is_valid"),
+        isin_country_code(pl.col("isin")).alias("country_code"),
+        isin_check_digit(pl.col("isin")).alias("check_digit"),
+        isin_security_id(pl.col("isin")).alias("security_id"),
+        isin_is_valid(pl.col("isin")).alias("is_valid"),
     )
     test2 = (
         df.lazy()
         .select(
-            pl.col("isin").isin.country_code().alias("country_code"),
-            pl.col("isin").isin.check_digit().alias("check_digit"),
-            pl.col("isin").isin.security_id().alias("security_id"),
-            pl.col("isin").isin.is_valid().alias("is_valid"),
+            isin_country_code(pl.col("isin")).alias("country_code"),
+            isin_check_digit(pl.col("isin")).alias("check_digit"),
+            isin_security_id(pl.col("isin")).alias("security_id"),
+            isin_is_valid(pl.col("isin")).alias("is_valid"),
         )
         .collect()
     )
