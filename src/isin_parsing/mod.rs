@@ -2,20 +2,20 @@ use polars::prelude::*;
 use pyo3_polars::derive::polars_expr;
 
 fn isin_full_output(_: &[Field]) -> PolarsResult<Field> {
-    let cc = Field::new("country_code", DataType::String);
-    let id = Field::new("security_id", DataType::String);
-    let cd = Field::new("check_digit", DataType::String);
+    let cc = Field::new("country_code".into(), DataType::String);
+    let id = Field::new("security_id".into(), DataType::String);
+    let cd = Field::new("check_digit".into(), DataType::String);
 
     let v: Vec<Field> = vec![cc, id, cd];
-    Ok(Field::new("", DataType::Struct(v)))
+    Ok(Field::new("".into(), DataType::Struct(v)))
 }
 
 #[polars_expr(output_type_func=isin_full_output)]
 fn pl_isin_full(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
-    let mut cc_builder = StringChunkedBuilder::new("country_code", ca.len());
-    let mut id_builder = StringChunkedBuilder::new("security_id", ca.len());
-    let mut cd_builder = StringChunkedBuilder::new("check_digit", ca.len());
+    let mut cc_builder = StringChunkedBuilder::new("country_code".into(), ca.len());
+    let mut id_builder = StringChunkedBuilder::new("security_id".into(), ca.len());
+    let mut cd_builder = StringChunkedBuilder::new("check_digit".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -35,11 +35,15 @@ fn pl_isin_full(inputs: &[Series]) -> PolarsResult<Series> {
         }
     });
 
-    let cc = cc_builder.finish().into_series();
-    let id = id_builder.finish().into_series();
-    let cd = cd_builder.finish().into_series();
+    let cc = cc_builder.finish().into_series().into_column();
+    let id = id_builder.finish().into_series().into_column();
+    let cd = cd_builder.finish().into_series().into_column();
 
-    let out = StructChunked::new("isin", &[cc, id, cd])?;
+    let out = StructChunked::from_columns(
+        "isin".into(), 
+        cc.len(),
+        &[cc, id, cd]
+    )?;
     Ok(out.into_series())
 }
 
@@ -47,7 +51,7 @@ fn pl_isin_full(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_isin_country_code(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut builder = StringChunkedBuilder::new("country_code", ca.len());
+    let mut builder = StringChunkedBuilder::new("country_code".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -69,7 +73,7 @@ fn pl_isin_country_code(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_isin_security_id(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut builder = StringChunkedBuilder::new("security_id", ca.len());
+    let mut builder = StringChunkedBuilder::new("security_id".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -91,7 +95,7 @@ fn pl_isin_security_id(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_isin_check_digit(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut builder = StringChunkedBuilder::new("check_digit", ca.len());
+    let mut builder = StringChunkedBuilder::new("check_digit".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -113,7 +117,7 @@ fn pl_isin_check_digit(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_isin_is_valid(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut builder = BooleanChunkedBuilder::new("isin_valid", ca.len());
+    let mut builder = BooleanChunkedBuilder::new("isin_valid".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {

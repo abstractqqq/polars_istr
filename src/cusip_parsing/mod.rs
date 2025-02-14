@@ -3,23 +3,23 @@ use polars::prelude::*;
 use pyo3_polars::derive::polars_expr;
 
 fn cusip_full_output(_: &[Field]) -> PolarsResult<Field> {
-    let cc = Field::new("country_code", DataType::String);
-    let issuer = Field::new("issuer", DataType::String);
-    let issue = Field::new("issue", DataType::String);
-    let cd = Field::new("check_digit", DataType::String);
+    let cc = Field::new("country_code".into(), DataType::String);
+    let issuer = Field::new("issuer".into(), DataType::String);
+    let issue = Field::new("issue".into(), DataType::String);
+    let cd = Field::new("check_digit".into(), DataType::String);
 
     let v: Vec<Field> = vec![cc, issuer, issue, cd];
-    Ok(Field::new("", DataType::Struct(v)))
+    Ok(Field::new("".into(), DataType::Struct(v)))
 }
 
 #[polars_expr(output_type_func=cusip_full_output)]
 fn pl_cusip_full(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut cc_builder = StringChunkedBuilder::new("country_code", ca.len());
-    let mut ir_builder = StringChunkedBuilder::new("issuer", ca.len());
-    let mut is_builder = StringChunkedBuilder::new("issue", ca.len());
-    let mut cd_builder = StringChunkedBuilder::new("check_digit", ca.len());
+    let mut cc_builder = StringChunkedBuilder::new("country_code".into(), ca.len());
+    let mut ir_builder = StringChunkedBuilder::new("issuer".into(), ca.len());
+    let mut is_builder = StringChunkedBuilder::new("issue".into(), ca.len());
+    let mut cd_builder = StringChunkedBuilder::new("check_digit".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -48,12 +48,12 @@ fn pl_cusip_full(inputs: &[Series]) -> PolarsResult<Series> {
             cd_builder.append_null();
         }
     });
-    let cc = cc_builder.finish().into_series();
-    let ir = ir_builder.finish().into_series();
-    let is = is_builder.finish().into_series();
-    let cd = cd_builder.finish().into_series();
+    let cc = cc_builder.finish().into_series().into_column();
+    let ir = ir_builder.finish().into_series().into_column();
+    let is = is_builder.finish().into_series().into_column();
+    let cd = cd_builder.finish().into_series().into_column();
 
-    let out = StructChunked::new("cusip", &[cc, ir, is, cd])?;
+    let out = StructChunked::from_columns("cusip".into(), cc.len(), &[cc, ir, is, cd])?;
     Ok(out.into_series())
 }
 
@@ -61,7 +61,7 @@ fn pl_cusip_full(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_issue_num(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut s_builder = StringChunkedBuilder::new("issue_num", ca.len());
+    let mut s_builder = StringChunkedBuilder::new("issue_num".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -83,7 +83,7 @@ fn pl_cusip_issue_num(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_issuer_num(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut s_builder = StringChunkedBuilder::new("issuer_num", ca.len());
+    let mut s_builder = StringChunkedBuilder::new("issuer_num".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -109,7 +109,7 @@ fn pl_cusip_issuer_num(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_country_code(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut s_builder = StringChunkedBuilder::new("country_code", ca.len());
+    let mut s_builder = StringChunkedBuilder::new("country_code".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -135,7 +135,7 @@ fn pl_cusip_country_code(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_check_digit(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut s_builder = StringChunkedBuilder::new("check_digit", ca.len());
+    let mut s_builder = StringChunkedBuilder::new("check_digit".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -157,7 +157,7 @@ fn pl_cusip_check_digit(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_payload(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut s_builder = StringChunkedBuilder::new("check_digit", ca.len());
+    let mut s_builder = StringChunkedBuilder::new("check_digit".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -179,7 +179,7 @@ fn pl_cusip_payload(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_is_private_issue(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut b_builder = BooleanChunkedBuilder::new("is_private_issue", ca.len());
+    let mut b_builder = BooleanChunkedBuilder::new("is_private_issue".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -201,7 +201,7 @@ fn pl_cusip_is_private_issue(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_has_private_issuer(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut b_builder = BooleanChunkedBuilder::new("has_private_issuer", ca.len());
+    let mut b_builder = BooleanChunkedBuilder::new("has_private_issuer".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -223,7 +223,7 @@ fn pl_cusip_has_private_issuer(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_is_private_use(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut b_builder = BooleanChunkedBuilder::new("is_private_use", ca.len());
+    let mut b_builder = BooleanChunkedBuilder::new("is_private_use".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -245,7 +245,7 @@ fn pl_cusip_is_private_use(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_is_cins(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut b_builder = BooleanChunkedBuilder::new("is_cins", ca.len());
+    let mut b_builder = BooleanChunkedBuilder::new("is_cins".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -267,7 +267,7 @@ fn pl_cusip_is_cins(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_is_cins_base(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut b_builder = BooleanChunkedBuilder::new("is_cins_base", ca.len());
+    let mut b_builder = BooleanChunkedBuilder::new("is_cins_base".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
@@ -293,7 +293,7 @@ fn pl_cusip_is_cins_base(inputs: &[Series]) -> PolarsResult<Series> {
 fn pl_cusip_is_cins_extended(inputs: &[Series]) -> PolarsResult<Series> {
     let ca = inputs[0].str()?;
 
-    let mut b_builder = BooleanChunkedBuilder::new("is_cins_extended", ca.len());
+    let mut b_builder = BooleanChunkedBuilder::new("is_cins_extended".into(), ca.len());
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
