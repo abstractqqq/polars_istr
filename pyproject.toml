@@ -21,6 +21,7 @@ authors = [
 ]
 dependencies = [
     "polars >= 1.4",
+    'typing-extensions; python_version <= "3.11"',
 ] 
 
 keywords = ["polars-extension", "string-processing", "data-processing", "parsing"]
