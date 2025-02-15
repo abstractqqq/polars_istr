@@ -1,11 +1,11 @@
 [build-system]
-requires = ["maturin>=1.2,<2.0"]
+requires = ["maturin>=1.7.4,<2.0"]
 build-backend = "maturin"
 
 [project]
 name = "polars_istr"
 requires-python = ">=3.8"
-version = "0.1.1"
+version = "0.1.2"
 
 license = {file = "LICENSE.txt"}
 classifiers = [
@@ -20,7 +20,8 @@ authors = [
     {name = "Connor Duncan", email = "connor@connorduncan.xyz"},
 ]
 dependencies = [
-    "polars >= 0.20.6, !=0.20.12",
+    "polars >= 1.4",
+    'typing-extensions; python_version <= "3.11"',
 ] 
 
 keywords = ["polars-extension", "string-processing", "data-processing", "parsing"]
