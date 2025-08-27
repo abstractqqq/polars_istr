@@ -39,11 +39,7 @@ fn pl_isin_full(inputs: &[Series]) -> PolarsResult<Series> {
     let id = id_builder.finish().into_series().into_column();
     let cd = cd_builder.finish().into_series().into_column();
 
-    let out = StructChunked::from_columns(
-        "isin".into(), 
-        cc.len(),
-        &[cc, id, cd]
-    )?;
+    let out = StructChunked::from_columns("isin".into(), cc.len(), &[cc, id, cd])?;
     Ok(out.into_series())
 }
 
