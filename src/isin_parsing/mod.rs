@@ -117,7 +117,10 @@ fn pl_isin_is_valid(inputs: &[Series]) -> PolarsResult<Series> {
 
     ca.into_iter().for_each(|op_s| {
         if let Some(s) = op_s {
-            builder.append_value(isin::validate(s));
+            builder.append_value(match isin::validate(s) {
+                Ok(_) => true,
+                Err(_) => false,
+            });
         } else {
             builder.append_value(false);
         }
